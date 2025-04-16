@@ -4,6 +4,7 @@ from json_repair import repair_json
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
 from functools import lru_cache
+import os
 
 BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 
