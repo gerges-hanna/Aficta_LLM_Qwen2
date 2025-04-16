@@ -15,3 +15,7 @@ def predict():
     model, tokenizer = get_model(lora_name)
     result = generate_output(model, tokenizer, query)
     return jsonify(result)
+
+@bp.route("/")
+def hello():
+    return "Hello, world from Flask on AWS EC2! Qwen Project"
