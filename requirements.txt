@@ -1,0 +1,7 @@
+flask
+transformers
+peft
+datasets
+bitsandbytes
+accelerate
+json-repair
