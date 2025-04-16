@@ -6,10 +6,17 @@ from peft import PeftModel
 from functools import lru_cache
 
 BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
+
+
+# Get the directory of the current file (e.g., app/model.py)
+project_root = os.path.dirname(os.path.abspath(__file__))
+
+# Build absolute path to the lora_model folder in your project
 LORA_MODELS = {
-    "default": "/home/ubuntu/lora_model",  # Update with actual LoRA paths
-    # Add more LoRA adapters here in the future
+    "default": os.path.join(project_root, "..", "lora_model"),
+    # In the future: "hotel_filter": os.path.join(project_root, "..", "lora_model", "hotel_filter"),
 }
+
 
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
