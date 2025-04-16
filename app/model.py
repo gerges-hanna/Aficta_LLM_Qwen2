@@ -1,24 +1,21 @@
 import torch
 import json
+import os
 from json_repair import repair_json
+from functools import lru_cache
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
-from functools import lru_cache
-import os
 
 BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 
-
-# Get the directory of the current file (e.g., app/model.py)
+# Absolute paths for LoRA adapters
 project_root = os.path.dirname(os.path.abspath(__file__))
-
-# Build absolute path to the lora_model folder in your project
 LORA_MODELS = {
     "default": os.path.join(project_root, "..", "lora_model"),
-    # In the future: "hotel_filter": os.path.join(project_root, "..", "lora_model", "hotel_filter"),
+    # Add more like: "hotel": os.path.join(..., "hotel_filter")
 }
 
-
+# Quantization config
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_use_double_quant=True,
@@ -26,25 +23,32 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_compute_dtype=torch.bfloat16,
 )
 
-@lru_cache()
-def get_base_model():
-    tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, trust_remote_code=True)
-    tokenizer.pad_token = tokenizer.eos_token
-    model = AutoModelForCausalLM.from_pretrained(
-        BASE_MODEL,
-        device_map="auto",
-        quantization_config=bnb_config,
-        trust_remote_code=True
-    )
-    return model, tokenizer
+# Load base model + tokenizer once
+print("[INIT] Loading base model and tokenizer...")
+tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, trust_remote_code=True)
+tokenizer.pad_token = tokenizer.eos_token
 
-@lru_cache()
+base_model = AutoModelForCausalLM.from_pretrained(
+    BASE_MODEL,
+    device_map="auto",
+    trust_remote_code=True,
+    quantization_config=bnb_config
+)
+
+# In-memory cache for LoRA adapters
+_loaded_loras = {}
+
 def get_model(lora_name="default"):
-    base_model, tokenizer = get_base_model()
+    if lora_name in _loaded_loras:
+        return _loaded_loras[lora_name]
+
     lora_path = LORA_MODELS.get(lora_name)
-    if lora_path is None:
+    if not lora_path:
         raise ValueError(f"LoRA adapter '{lora_name}' not found.")
+
+    print(f"[INFO] Loading LoRA adapter: {lora_name} from {lora_path}")
     model = PeftModel.from_pretrained(base_model, lora_path)
+    _loaded_loras[lora_name] = (model, tokenizer)
     return model, tokenizer
 
 def generate_output(model, tokenizer, input_text: str, max_new_tokens=256):
