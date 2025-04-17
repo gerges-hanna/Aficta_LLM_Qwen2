@@ -20,8 +20,8 @@ sudo apt install python3-venv
 ```bash
 mkdir flask-app
 cd flask-app/
-git clone https://github.com/gerges-hanna/Test-flask.git
-cd Test-flask  # Later renamed to Aficta_LLM_Qwen2
+git clone https://github.com/gerges-hanna/Aficta_LLM_Qwen2.git
+cd Aficta_LLM_Qwen2 
 ```
 
 📌 Use these commands only once when deploying the project for the first time. Afterward, use `git pull` to update.
@@ -159,5 +159,13 @@ curl http://127.0.0.1:5000/
 Or open your browser: `http://<Elastic IP>`
 
 ---
+
+## 📋 View Logs for Flask Service (It's helpful if project failed)
+
+To check the most recent logs of your Flask application (managed via `systemd`), use the following command:
+
+```bash
+sudo journalctl -u flask-app --no-pager -n 50
+
 
 This documentation is your reference for deploying, modifying, or troubleshooting your Flask app on AWS EC2.
