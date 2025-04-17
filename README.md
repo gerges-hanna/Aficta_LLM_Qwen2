@@ -166,6 +166,6 @@ To check the most recent logs of your Flask application (managed via `systemd`),
 
 ```bash
 sudo journalctl -u flask-app --no-pager -n 50
-
+```
 
 This documentation is your reference for deploying, modifying, or troubleshooting your Flask app on AWS EC2.
