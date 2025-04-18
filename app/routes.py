@@ -32,7 +32,7 @@ def predict_filter():
         return jsonify({"error": "Missing 'query' in request"}), 400
     model, tokenizer = get_model(lora_name)
     result = generate_output(model, tokenizer, query)
-    api_format=convert_filters_to_api_format(result)
+    api_format=convert_filters_to_api_format(model, tokenizer,result)
     return jsonify(api_format)
 
 

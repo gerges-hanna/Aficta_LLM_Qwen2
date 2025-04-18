@@ -114,7 +114,7 @@ def predict_airline_code(model, tokenizer, user_input):
 
 
 
-def convert_filters_to_api_format(filters_json):
+def convert_filters_to_api_format(model, tokenizer,filters_json):
     stops = []   # default all included
     airlines = []
 
@@ -128,7 +128,7 @@ def convert_filters_to_api_format(filters_json):
             stops = [1]
 
         elif field == "شركة_الطيران":
-            code = predict_airline_code(value.strip())
+            code = predict_airline_code(model, tokenizer,value.strip())
             if code:
                 airlines.append({
             "code": code,
