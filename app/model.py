@@ -11,8 +11,9 @@ BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 # Absolute paths for LoRA adapters
 project_root = os.path.dirname(os.path.abspath(__file__))
 LORA_MODELS = {
-    "default": os.path.join(project_root, "..", "lora_model"),
-    # Add more like: "hotel": os.path.join(..., "hotel_filter")
+    "default": os.path.join(project_root, "..", "lora_model","flight_filter"),
+    "flight_filter": os.path.join(project_root, "..", "lora_model","flight_filter"),
+    "airline_code": os.path.join(project_root, "..", "lora_model","airline_code"),
 }
 
 # Quantization config
@@ -90,3 +91,51 @@ def generate_output(model, tokenizer, input_text: str, max_new_tokens=256):
         print("❌ Error repairing/parsing JSON:", e)
 
     return {"filters": [], "sort_by": []}
+
+
+
+def predict_airline_code(model, tokenizer, user_input):
+    prompt = f"""
+أنت مساعد ذكي متخصص في معرفة كود IATA الخاص بشركات الطيران المختلفة.
+يعني لو المستخدم كتب اسم شركة طيران، حتى لو فيه خطأ إملائي أو مكتوب بطريقة مختلفة، حاول تفهم الشركة المقصودة وارجع بكود الشركة المكون من حرفين.
+
+الاسم: {user_input}
+الكود:"""
+
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+    output = model.generate(**inputs, max_new_tokens=10, pad_token_id=tokenizer.eos_token_id)
+    result = tokenizer.decode(output[0], skip_special_tokens=True)
+
+    # Extract the IATA code after "الكود:"
+    if "الكود:" in result:
+        result = result.split("الكود:")[-1].strip().split("\n")[0]
+
+    return { "predicted_code": result}
+
+
+
+def convert_filters_to_api_format(filters_json):
+    stops = []   # default all included
+    airlines = []
+
+    for f in filters_json.get("filters", []):
+        field = f["field"]
+        value = f["value"]
+
+        if field == "نوع_الرحلة" and (value.strip() == "مباشر" or value.strip() == "مباشرة"):
+            stops = [0]  # only direct flights
+        elif field == "نوع_الرحلة" and (value.strip() == "غير مباشر" or value.strip() == "غير مباشرة"):
+            stops = [1]
+
+        elif field == "شركة_الطيران":
+            code = predict_iata_code(value.strip())
+            if code:
+                airlines.append({
+            "code": code,
+            "name": value.strip(),
+            })
+
+    return {
+        "stops": stops,
+        "airlines": airlines
+    }

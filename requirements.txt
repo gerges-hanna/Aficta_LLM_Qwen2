@@ -5,3 +5,4 @@ datasets
 bitsandbytes
 accelerate
 json-repair
+gunicorn
