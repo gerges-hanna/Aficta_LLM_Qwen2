@@ -110,7 +110,7 @@ def predict_airline_code(model, tokenizer, user_input):
     if "الكود:" in result:
         result = result.split("الكود:")[-1].strip().split("\n")[0]
 
-    return { "predicted_code": result}
+    return result
 
 
 

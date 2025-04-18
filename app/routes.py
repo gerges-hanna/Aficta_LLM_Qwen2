@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.model import get_model, generate_output, convert_filters_to_api_format
+from app.model import get_model, generate_output, convert_filters_to_api_format, predict_airline_code
 
 bp = Blueprint('routes', __name__)
 
