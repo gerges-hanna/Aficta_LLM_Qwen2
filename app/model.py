@@ -130,9 +130,7 @@ def convert_filters_to_api_format(model, tokenizer,filters_json):
         elif field == "شركة_الطيران":
             code = predict_airline_code(model, tokenizer,value.strip())
             if code:
-                airlines.append({
-            "code": code
-            })
+                airlines.append(code)
 
     return {
         "stops": stops,
