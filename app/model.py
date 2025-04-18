@@ -125,14 +125,13 @@ def convert_filters_to_api_format(model, tokenizer,filters_json):
         if field == "نوع_الرحلة" and (value.strip() == "مباشر" or value.strip() == "مباشرة"):
             stops = [0]  # only direct flights
         elif field == "نوع_الرحلة" and (value.strip() == "غير مباشر" or value.strip() == "غير مباشرة"):
-            stops = [1]
+            stops = [1,2]
 
         elif field == "شركة_الطيران":
             code = predict_airline_code(model, tokenizer,value.strip())
             if code:
                 airlines.append({
-            "code": code,
-            "name": value.strip(),
+            "code": code
             })
 
     return {
