@@ -14,7 +14,7 @@ def predict():
 
     model, tokenizer = get_model(lora_name)
     if(lora_name=="airline_code"):
-        result=predict_airline_code(model,tokenizer,user_input)
+        result=predict_airline_code(model,tokenizer,query)
     else:
         result = generate_output(model, tokenizer, query)
     
