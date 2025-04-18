@@ -128,7 +128,7 @@ def convert_filters_to_api_format(filters_json):
             stops = [1]
 
         elif field == "شركة_الطيران":
-            code = predict_iata_code(value.strip())
+            code = predict_airline_code(value.strip())
             if code:
                 airlines.append({
             "code": code,
