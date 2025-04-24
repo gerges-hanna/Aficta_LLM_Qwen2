@@ -5,8 +5,21 @@ from json_repair import repair_json
 from functools import lru_cache
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
+from AirlineCodeRetriever import AirlineCodeRetriever
 
 BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
+
+# Create singleton instance (loaded once)
+retriever = AirlineCodeRetriever(
+    dataset_path="data\Airlines_List_Arabic_English(small_version).xlsx",
+    name_en="name_en",
+    name_ar="name_ar",
+    airline_code="airline_code"
+)
+
+
+
+
 
 # Absolute paths for LoRA adapters
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -128,7 +141,7 @@ def convert_filters_to_api_format(model, tokenizer,filters_json):
             stops = [1,2]
 
         elif field == "شركة_الطيران":
-            code = predict_airline_code(model, tokenizer,value.strip())
+            code = retriever.retrieve(value.strip())
             if code:
                 airlines.append(code)
 
