@@ -7,3 +7,4 @@ accelerate
 json-repair
 gunicorn
 sentence-transformers
+openpyxl
