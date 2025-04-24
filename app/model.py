@@ -10,14 +10,20 @@ from app.Search.AirlineCodeRetriever import AirlineCodeRetriever
 
 BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 
-# Create singleton instance (loaded once)
+
+# Get the absolute path to the base project root (i.e., Aficta_LLM_Qwen2/)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+# Construct the absolute path to the dataset
+dataset_path = os.path.join(project_root, "data", "Airlines_List_Arabic_English(small_version).xlsx")
+
+# Use this in the retriever
 retriever = AirlineCodeRetriever(
-    dataset_path="data\Airlines_List_Arabic_English(small_version).xlsx",
+    dataset_path=dataset_path,
     name_en="name_en",
     name_ar="name_ar",
     airline_code="airline_code"
 )
-
 
 
 
