@@ -5,7 +5,7 @@ from json_repair import repair_json
 from functools import lru_cache
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
-from AirlineCodeRetriever import AirlineCodeRetriever
+from Search/AirlineCodeRetriever.py import AirlineCodeRetriever
 
 BASE_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 
